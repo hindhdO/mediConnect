@@ -43,11 +43,10 @@ const Footer = () => {
       <div className="container">
         <div className="flex justify-between flex-col md:flex-row flex-wrap gap-[30px]">
           <div>
-            <img src={logo} alt="" className="w-12" />
-            <h3>Mediconnect</h3>
-            {/* <p className="text-[16px] leading-7 font-[400] text-textColor mt-4">
+            <img src={logo} alt="" />
+            <p className="text-[16px] leading-7 font-[400] text-textColor mt-4">
               Copyright {year} developed by Muhibur Rahman all right reserved.
-            </p> */}
+            </p>
             <div className="flex items-center gap-3 mt-4">
               {socialLinks.map((link, index) => (
                 <Link

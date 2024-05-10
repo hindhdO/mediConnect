@@ -10,14 +10,13 @@ const navlinks = [
     display: 'Home'
   },
   {
-    path: '/services',
-    display: 'Services'
-  },
-  {
     path: '/doctors',
     display: 'Find a Doctor'
   },
-
+  {
+    path: '/services',
+    display: 'Services'
+  },
   {
     path: '/contact',
     display: 'Contact'
@@ -52,10 +51,9 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div>
-            <img src={logo} alt="Logo"  className="w-12"/>
-            
-
+            <img src={logo} alt="Logo" />
           </div>
+
           {/* Navigation */}
           <div className="navigation" ref={menuRef} onClick={toggleMenu}>
             <ul className='menu flex items-center gap-[2.7rem]'>
@@ -81,7 +79,7 @@ const Header = () => {
             <div className='hidden md:block'>
               <Link to='/'>
                 <figure className='w-[35px] h-[35px] rounded-full cursor-pointer'>
-                  {/* <img src={userImg} alt='' /> */}
+                  <img src={userImg} alt='' />
                 </figure>
               </Link>
             </div>
