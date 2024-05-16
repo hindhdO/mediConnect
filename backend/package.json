@@ -2,6 +2,8 @@
   "name": "medicare-booking",
   "version": "1.0.0",
   "main": "index.js",
+  "description": "",
+  "type":"module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
@@ -9,8 +11,6 @@
   },
   "author": "hind",
   "license": "ISC",
-  "description": "",
-  "type": "module",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",

@@ -19,6 +19,8 @@ const corsOptions={
 app.get('/',(req,res)=>{
     res.send('Api is working')
 })
+
+
 //database connection
 mongoose.set('strictQuery',false)
 const connectDB = async () => {
