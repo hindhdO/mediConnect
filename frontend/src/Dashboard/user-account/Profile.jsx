@@ -1,85 +1,77 @@
+
 import { useEffect, useState } from "react";
-import signupImg from "../assets/images/signup.gif";
-import { Link, useNavigate } from "react-router-dom";
-import uploadImageToCloudinary from "../../utils/uploadCloudinary";
-import { BASE_URL } from "../config";
+
+import {  useNavigate } from "react-router-dom";
+import uploadImageToCloudinary from "../../../utils/uploadCloudinary";
+import { BASE_URL,token } from "../../config";
 import { toast } from 'react-toastify';
 import HashLoader from 'react-spinners/HashLoader';
+const Profile = ({user}) => {
+    const [selectedFile, setSelectedFile] = useState(null);
+    
+    const [key, setKey] = useState(Date.now());
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+      name: '',
+      email: '',
+      password: '',
+      photo: null,
+      gender: '',
+      bloodType:"",
+    });
+    const navigate = useNavigate();
 
-const Signup = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewURL, setPreviewURL] = useState("");
-  const [key, setKey] = useState(Date.now());
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    photo: '',
-    gender: '',
-    role: 'patient'
-  });
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    // Resets the key on each component mount to force reload the GIF
-    setKey(Date.now());
-  }, []);
-
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleFileInputChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const data = await uploadImageToCloudinary(file);
-      setPreviewURL(data.url);
-      setSelectedFile(data.url);
-      setFormData({ ...formData, photo: data.url });
-    }
-  };
-
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await fetch(`${BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-      const { message } = await res.json();
-      if (!res.ok) {
-        throw new Error(message);
+    useEffect(()=>{
+        setFormData({name:user.name,email:user.email,photo:user.photo,gender:user.gender,bloodType:user.bloodType});
+    },[user])
+  
+    useEffect(() => {
+      // Resets the key on each component mount to force reload the GIF
+      setKey(Date.now());
+    }, []);
+  
+    const handleInputChange = (e) => {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+  
+    const handleFileInputChange = async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const data = await uploadImageToCloudinary(file);
+        
+        setSelectedFile(data.url);
+        setFormData({ ...formData, photo: data.url });
       }
-
-      setLoading(false);
-      toast.success(message);
-      navigate('/login');
-    } catch (error) {
-      toast.error(error.message);
-      setLoading(false);
-    }
-  };
-
+    };
+  
+    const submitHandler = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      try {
+        const res = await fetch(`${BASE_URL}/users/${user._id}`, {
+          method: 'put',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization:`Bearer ${token}`
+          },
+          body: JSON.stringify(formData)
+        });
+        const { message } = await res.json();
+        if (!res.ok) {
+          throw new Error(message);
+        }
+  
+        setLoading(false);
+        toast.success(message);
+        navigate('/users/profile/me');
+      } catch (error) {
+        toast.error(error.message);
+        setLoading(false);
+      }
+    };
   return (
-    <section className="px-5 xl:px-0">
-      <div className="max-w-[1170px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div className="hidden lg:block bg-primaryColor rounded-l-lg">
-            <figure className="rounded-l-lg">
-              <img src={`${signupImg}?${key}`} alt="Sign up" className="w-full rounded-l-lg" />
-            </figure>
-          </div>
-
-          <div>
-            <h3 className="text-headingColor text-[22px] leading-9 font-bold mb-10">
-              Create an <span className="text-primaryColor">account</span>
-            </h3>
-            <form onSubmit={submitHandler}>
+    <div className="mt-10">
+     <form onSubmit={submitHandler}>
               <input 
                 type="text" 
                 placeholder="Full Name"
@@ -100,7 +92,8 @@ const Signup = () => {
                 className="mb-5 w-full px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none
                 focus:border-b-primaryColor text-[15px] leading-7 text-headingColor
                 placeholder:text-textColor rounded-md cursor-pointer" 
-                required
+                aria-readonly
+                readOnly
               />
               <input 
                 type="password" 
@@ -111,22 +104,22 @@ const Signup = () => {
                 className="mb-5 w-full px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none
                 focus:border-b-primaryColor text-[15px] leading-7 text-headingColor
                 placeholder:text-textColor rounded-md cursor-pointer" 
+               
+              />
+              <input 
+                type="text" 
+                placeholder="Blood Type"
+                name="bloodType" 
+                value={formData.bloodType}  
+                onChange={handleInputChange}  
+                className="mb-5 w-full px-4 py-3 border-b border-solid border-[#0066ff61] focus:outline-none
+                focus:border-b-primaryColor text-[15px] leading-7 text-headingColor
+                placeholder:text-textColor rounded-md cursor-pointer" 
                 required
               />
               
               <div className="mb-5 flex items-center justify-between">
-                <label className="text-headingColor font-bold text-[15px] leading-7">
-                  Are you a:
-                  <select 
-                    name="role"
-                    value={formData.role}  
-                    onChange={handleInputChange}
-                    className="text-textColor font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none"
-                  >
-                    <option value="patient">Patient</option>
-                    <option value="doctor">Doctor</option>
-                  </select>
-                </label>
+                
                 <label className="text-headingColor font-bold text-[15px] leading-7">
                   Gender:
                   <select 
@@ -143,9 +136,9 @@ const Signup = () => {
               </div>
 
               <div className="mb-5 flex items-center gap-3">
-                {selectedFile && (
+                {formData.photo && (
                   <figure className="w-[60px] h-[60px] rounded-full border-2 border-solid border-primaryColor flex items-center justify-center">
-                    <img src={previewURL} alt="Profile" className="w-full rounded-full" />
+                    <img src={formData.photo} alt="" className="w-full rounded-full" />
                   </figure>
                 )}
                 <div className="relative w-[130px] h-[50px]">
@@ -161,7 +154,7 @@ const Signup = () => {
                     htmlFor="customFile" 
                     className="absolute top-0 left-0 w-full h-full flex items-center px-[0.75rem] py-[0.37rem] text-[15px] leading-6 overflow-hidden bg-[#0066ff46] text-headingColor font-semibold rounded-lg truncate cursor-pointer"
                   >
-                    Upload Photo
+                    {selectedFile ? selectedFile.name : "Upload Photo"}
                   </label>
                 </div>
               </div>
@@ -171,21 +164,13 @@ const Signup = () => {
                 className={`mt-7 w-full bg-primaryColor text-white text-[18px] leading-[30px] py-4 px-3 rounded-lg hover:bg-primaryDarkColor ${loading && 'opacity-50 cursor-not-allowed'}`}
                 disabled={loading}
               >
-                {loading ? <HashLoader size={35} color="#ffffff" /> : 'Sign up'}
+                {loading ? <HashLoader size={25} color="#ffffff" /> : 'Update'}
               </button>
 
-              <p className="mt-5 text-textColor text-center">
-                Already have an account?{" "}
-                <Link to="/login" className="text-primaryColor font-medium ml-1">
-                  Login
-                </Link>
-              </p>
+              
             </form>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
+    </div>
+  )
+}
 
-export default Signup;
+export default Profile
