@@ -1,7 +1,7 @@
 
 import { formatDate } from '../../../utils/formateDate';  
 
-const DoctorAbout = () => {
+const DoctorAbout = ({name,about,qualifications,experiences}) => {
   return (
     <div>
       <div>

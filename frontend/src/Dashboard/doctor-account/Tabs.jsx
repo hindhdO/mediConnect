@@ -8,10 +8,13 @@ import {useNavigate} from "react-router-dom";
 const Tabs = ({ tab, setTab }) => {
 
 
-    const dispatch= useContext(authContext)
+    const {dispatch}= useContext(authContext)
     const navigate =useNavigate()
 
-    const handleLogout=()//////////////////////:::::::::::::::::::::::
+    const handleLogout=()=>{
+      dispatch({type:'LOGOUT'});
+      navigate('/login')
+    }
   return (
     <div>
       <span className="lg:hidden">
@@ -30,9 +33,9 @@ const Tabs = ({ tab, setTab }) => {
         </button>
 
         <button
-        onClick={()=> setTab('appointements')}
+        onClick={()=> setTab('appointments')}
           className={`${
-            tab == "appointements"
+            tab == "appointments"
               ? "bg-indigo-100 text-primaryColor"
               : "bg-transparent text-headingColor"
           } w-full btn mt-0 rounded-md`}
